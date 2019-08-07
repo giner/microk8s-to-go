@@ -5,11 +5,18 @@ microk8s_ip = "192.168.51.101"
 k8s_version = "1.15/stable"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]
 
+# VM configuration
+cpus   = 2    # Cores
+memory = 4    # GiB
+swap   = 4    # GiB
+disk   = 32   # GiB
+
 variables = <<~SHELL
   MICROK8S_IP="#{microk8s_ip}"
   K8S_VERSION="#{k8s_version}"
   DNS_FORWARDERS="#{dns_forwarders.join(" ")}"
   DONE_DIR="/home/vagrant/done"
+  SWAP="#{swap}"
 SHELL
 
 scripts_common = <<~'SHELL'
@@ -46,11 +53,11 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: microk8s_ip
 
   config.vagrant.plugins = ["vagrant-disksize"]
-  config.disksize.size = '32GB'
+  config.disksize.size = disk.to_s + 'GB'
 
   config.vm.provider "virtualbox" do |v|
-    v.cpus = 2
-    v.memory = 4096
+    v.cpus = cpus
+    v.memory = memory * 1024
     v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
   end
 
@@ -68,7 +75,7 @@ Vagrant.configure("2") do |config|
 
         # Add swapfile
         local swapfile="/microk8s_swapfile"
-        fallocate -l 4G "$swapfile"
+        fallocate -l "${SWAP}G" "$swapfile"
         chmod 600 "$swapfile"
         mkswap "$swapfile"
         echo "$swapfile none swap sw 0 0" | tee -a /etc/fstab
