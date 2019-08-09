@@ -47,22 +47,31 @@ scripts_common = <<~'SHELL'
     fi
   }
 
-  kubectl () {
-    local kubectl_cmd counter
-    kubectl_cmd=$(which kubectl)
+  retry () {
+    local retries=$1; shift
+    local command=("$@")
+    local output
 
-    # Make sure the API server is up and running
-    local retries=5
     for ((counter=1; counter<=retries; counter++)); do
-      if "$kubectl_cmd" version > /dev/null; then
+      if output=$("${command[@]}" 2>&1); then
         break
       else
         sleep 1
-        echo "Retrying connection to the API server ($counter / $retries) ..." >&2
+        echo "Retrying: \"${command[@]}\" ($counter / $retries) ..." >&2
         continue
       fi
       return 1
     done
+
+    echo "$output"
+  }
+
+  kubectl () {
+    local kubectl_cmd
+    kubectl_cmd=$(which kubectl)
+
+    # Make sure the API server is up and running
+    retry 5 "$kubectl_cmd" version > /dev/null
 
     "$kubectl_cmd" "$@"
   }
