@@ -134,8 +134,9 @@ Vagrant.configure("2") do |config|
 
       enable_addons () {
         # Enable dns, storage and metrics-server
-        microk8s.enable storage
         microk8s.enable dns
+        sleep 5
+        microk8s.enable storage
         microk8s.enable metrics-server
       }
 
