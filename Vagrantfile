@@ -5,6 +5,8 @@ microk8s_ip = "192.168.51.101"
 k8s_version = "1.15/stable"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]
 
+Vagrant.require_version ">= 2.2.4"
+
 # VM configuration
 cpus   = 2    # Cores
 memory = 4    # GiB
