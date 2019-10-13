@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
     v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
   end
 
-  config.vm.provision "shell", name: "system" do |s|
+  config.vm.provision "shell", name: "system", upload_path: "/tmp/vagrant-shell-system" do |s|
     s.inline = variables + scripts_common + <<~'SHELL'
       prepare () {
         # Prepare directory
@@ -152,7 +152,7 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  config.vm.provision "shell", name: "user", privileged: false do |s|
+  config.vm.provision "shell", name: "user", upload_path: "/tmp/vagrant-shell-user", privileged: false do |s|
     s.inline = variables + scripts_common + <<~'SHELL'
       configure_dns_forwarders () {
         # Update coredns settings
