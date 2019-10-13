@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
     v.customize ["storagectl", :id, "--name", "SCSI", "--hostiocache", "on"]
   end
 
-  config.vm.provision "shell", name: "system", upload_path: "/tmp/vagrant-shell-system" do |s|
+  config.vm.provision "shell", name: "system", upload_path: "/tmp/vagrant-shell-system", reset: true do |s|
     s.inline = variables + scripts_common + <<~'SHELL'
       prepare () {
         # Prepare directory
@@ -112,11 +112,14 @@ Vagrant.configure("2") do |config|
       }
 
       install_microk8s () {
-        # Install microk8s and helm
+        # Install microk8s
         snap install microk8s --classic --channel="$K8S_VERSION"
 
         # Alias microk8s.kubectl -> kubectl
         snap alias microk8s.kubectl kubectl
+
+        # Allow kubectl to be run by user vagrant
+        usermod -a -G microk8s vagrant
 
         # Enable privileged containers
         microk8s.stop
