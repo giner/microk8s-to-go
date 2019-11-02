@@ -2,7 +2,7 @@
 # - Make sure `VBoxHeadless` process is not swapping out. If it does try to lower the requested memory for the VM.
 
 microk8s_ip = "192.168.51.101"
-k8s_version = "1.15/stable"
+k8s_version = "1.16/stable"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]
 
 Vagrant.require_version ">= 2.2.4"
@@ -128,29 +128,22 @@ Vagrant.configure("2") do |config|
         echo '--allow-privileged=true' | tee -a /var/snap/microk8s/current/args/kube-apiserver
       }
 
-      install_helm () {
-        snap install helm --classic
-      }
-
       start_microk8s () {
-        # Start microk8s
         microk8s.start
       }
 
       enable_addons () {
-        # Enable dns, storage and metrics-server
+        # Enable dns, storage, metrics-server, helm
         microk8s.enable dns
-        # WORK AROUND: wait for the cluster to be functional after enabling the first plugin
-        # See https://github.com/ubuntu/microk8s/issues/741
-        sleep 5 && microk8s.status --wait-ready --timeout 60
         microk8s.enable storage
         microk8s.enable metrics-server
+        microk8s.enable helm 2>/dev/null
+        snap alias microk8s.helm helm
       }
 
       main () {
         run_once prepare
         run_once install_microk8s
-        run_once install_helm
         run_once start_microk8s
         run_once enable_addons
       }
@@ -167,9 +160,6 @@ Vagrant.configure("2") do |config|
         local dns_patch
         dns_patch=$(kubectl -n kube-system get configmap/coredns -o jsonpath='{.data.Corefile}' | sed "s/\(forward .\) 8.8.8.8 8.8.4.4/\1 $DNS_FORWARDERS/" | jq -sR '{"data":{"Corefile":.}}')
         kubectl -n kube-system patch configmap/coredns --type merge -p "$dns_patch"
-
-        # Delete coredns pod to make sure the new settings are applied (sometimes coredns gets stuck in a failed state and not restarted)
-        kubectl -n kube-system delete pod -l k8s-app=kube-dns
       }
 
       helm_init () {

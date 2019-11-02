@@ -2,12 +2,13 @@
 microk8s on Vagrant
 
 # Features
-- Based on the official Ubuntu image with microk8s and helm installed from snaps
+- Based on the official Ubuntu image with microk8s installed from a snap
 - Lightweight
 - Enabled plugins:
   - dns
   - storage
   - metrics-server
+  - helm
 
 # How to use
 ## Starting up
