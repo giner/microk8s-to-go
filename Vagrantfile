@@ -3,6 +3,7 @@
 
 microk8s_ip = "192.168.51.101"
 k8s_version = "1.19/stable"
+vagrant_vm_box = "ubuntu/focal64"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]
 
 Vagrant.require_version ">= 2.2.4"
@@ -80,7 +81,7 @@ scripts_common = <<~'SHELL'
 SHELL
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = vagrant_vm_box
   config.vm.network "private_network", ip: microk8s_ip
 
   config.vagrant.plugins = ["vagrant-disksize"]
