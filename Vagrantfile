@@ -169,7 +169,7 @@ Vagrant.configure("2") do |config|
 
       helm_init () {
         # Initialize helm and wait for tiller to start (this will deploy tiller to k8s)
-        helm init --wait --history-max 200
+        helm init --wait --history-max 200 --stable-repo-url https://charts.helm.sh/stable
         helm repo remove local >/dev/null || true
       }
 
