@@ -123,10 +123,6 @@ Vagrant.configure("2") do |config|
 
         # Allow kubectl to be run by user vagrant
         usermod -a -G microk8s vagrant
-
-        # Enable privileged containers
-        microk8s.stop
-        echo '--allow-privileged=true' | tee -a /var/snap/microk8s/current/args/kube-apiserver
       }
 
       start_microk8s () {
