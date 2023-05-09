@@ -2,8 +2,8 @@
 # - Make sure `VBoxHeadless` process is not swapping out. If it does try to lower the requested memory for the VM.
 
 microk8s_ip = "192.168.51.101"
-k8s_version = "1.21/stable"
-vagrant_vm_box = "ubuntu/focal64"
+k8s_version = "1.27/stable"
+vagrant_vm_box = "ubuntu/jammy64"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]
 
 Vagrant.require_version ">= 2.2.4"
@@ -167,15 +167,8 @@ Vagrant.configure("2") do |config|
         kubectl -n kube-system patch configmap/coredns --type merge -p "$dns_patch"
       }
 
-      helm_init () {
-        # Initialize helm and wait for tiller to start (this will deploy tiller to k8s)
-        helm init --wait --history-max 200 --stable-repo-url https://charts.helm.sh/stable
-        helm repo remove local >/dev/null || true
-      }
-
       main () {
         run_once configure_dns_forwarders
-        run_once helm_init
       }
 
       main "$@"
