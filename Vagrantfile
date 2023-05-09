@@ -12,7 +12,7 @@ Vagrant.require_version ">= 2.2.4"
 cpus   = 2    # Cores
 memory = 4    # GiB
 swap   = 4    # GiB
-disk   = 32   # GiB
+disk   = 40   # GiB
 
 variables = <<~SHELL
   MICROK8S_IP="#{microk8s_ip}"
