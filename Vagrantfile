@@ -17,7 +17,7 @@ disk   = 32   # GiB
 variables = <<~SHELL
   MICROK8S_IP="#{microk8s_ip}"
   K8S_VERSION="#{k8s_version}"
-  DNS_FORWARDERS="#{dns_forwarders.join(" ")}"
+  DNS_FORWARDERS="#{dns_forwarders.join(",")}"
   DONE_DIR="/home/vagrant/done"
   SWAP="#{swap}"
 SHELL
@@ -139,7 +139,7 @@ Vagrant.configure("2") do |config|
 
       enable_addons () {
         # Enable dns, storage, metrics-server, helm
-        microk8s.enable dns
+        microk8s.enable dns:"$DNS_FORWARDERS"
         microk8s.enable storage
         microk8s.enable metrics-server
         microk8s.enable helm 2>/dev/null
@@ -151,24 +151,6 @@ Vagrant.configure("2") do |config|
         run_once install_microk8s
         run_once start_microk8s
         run_once enable_addons
-      }
-
-      main "$@"
-    SHELL
-  end
-
-  config.vm.provision "shell", name: "user", upload_path: "/tmp/vagrant-shell-user", privileged: false do |s|
-    s.inline = variables + scripts_common + <<~'SHELL'
-      configure_dns_forwarders () {
-        # Update coredns settings
-        # FIXME: This is a not reliable way of configuring dns and may not work sometimes, see https://github.com/ubuntu/microk8s/issues/543
-        local dns_patch
-        dns_patch=$(kubectl -n kube-system get configmap/coredns -o jsonpath='{.data.Corefile}' | sed "s/\(forward .\) 8.8.8.8 8.8.4.4/\1 $DNS_FORWARDERS/" | jq -sR '{"data":{"Corefile":.}}')
-        kubectl -n kube-system patch configmap/coredns --type merge -p "$dns_patch"
-      }
-
-      main () {
-        run_once configure_dns_forwarders
       }
 
       main "$@"
