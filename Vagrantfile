@@ -4,7 +4,7 @@
 microk8s_ip = "192.168.51.101"
 k8s_version = "1.27/stable"
 vagrant_vm_box = "ubuntu/jammy64"
-dns_forwarders = ["8.8.8.8", "8.8.4.4"]
+dns_forwarders = ["8.8.8.8", "8.8.4.4"]  # Specify ["/etc/resolv.conf"] to use local resolver
 
 Vagrant.require_version ">= 2.2.4"
 
