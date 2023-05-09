@@ -126,15 +126,15 @@ Vagrant.configure("2") do |config|
       }
 
       start_microk8s () {
-        microk8s.start
+        microk8s start
       }
 
       enable_addons () {
         # Enable dns, storage, metrics-server, helm
-        microk8s.disable dns && microk8s.enable dns:"$DNS_FORWARDERS"
-        microk8s.enable hostpath-storage
-        microk8s.enable metrics-server
-        microk8s.enable helm 2>/dev/null
+        microk8s disable dns && microk8s enable dns:"$DNS_FORWARDERS"
+        microk8s enable hostpath-storage
+        microk8s enable metrics-server
+        microk8s enable helm
         snap alias microk8s.helm helm
       }
 
