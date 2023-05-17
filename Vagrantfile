@@ -148,4 +148,23 @@ Vagrant.configure("2") do |config|
       main "$@"
     SHELL
   end
+
+  config.vm.provision "shell", name: "user", upload_path: "/tmp/vagrant-shell-user", privileged: false do |s|
+    s.inline = variables + scripts_common + <<~'SHELL'
+      configure_user_shell () {
+      sed 's/^  //' > ~/.inputrc << 'EOF'
+        $include  /etc/inputrc
+        # alternate mappings for "page up" and "page down" to search the history
+        "\e[5~": history-search-backward
+        "\e[6~": history-search-forward
+      EOF
+      }
+
+      main () {
+        run_once configure_user_shell
+      }
+
+      main "$@"
+    SHELL
+  end
 end
