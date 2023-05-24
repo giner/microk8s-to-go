@@ -125,10 +125,6 @@ Vagrant.configure("2") do |config|
         usermod -a -G microk8s vagrant
       }
 
-      start_microk8s () {
-        microk8s start
-      }
-
       enable_addons () {
         # Enable dns, storage, metrics-server, helm
         microk8s disable dns && microk8s enable dns:"$DNS_FORWARDERS"
@@ -141,7 +137,6 @@ Vagrant.configure("2") do |config|
       main () {
         run_once prepare
         run_once install_microk8s
-        run_once start_microk8s
         run_once enable_addons
       }
 
