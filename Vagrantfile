@@ -4,7 +4,7 @@
 # - Make sure `VBoxHeadless` process is not swapping out. If it does try to lower the requested memory for the VM.
 
 microk8s_ip = "192.168.51.101"
-k8s_version = "1.29/stable"
+k8s_version = "1.30/stable"
 vagrant_vm_box = "ubuntu/noble64"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]  # Specify ["/etc/resolv.conf"] to use local resolver
 
