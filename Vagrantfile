@@ -5,7 +5,7 @@
 
 microk8s_ip = "192.168.51.101"
 k8s_version = "1.30/stable"
-vagrant_vm_box = "ubuntu/noble64"
+vagrant_vm_box = "bento/ubuntu-24.04"
 dns_forwarders = ["8.8.8.8", "8.8.4.4"]  # Specify ["/etc/resolv.conf"] to use local resolver
 
 Vagrant.require_version ">= 2.2.4"
