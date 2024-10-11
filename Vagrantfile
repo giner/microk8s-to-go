@@ -104,7 +104,7 @@ Vagrant.configure("2") do |config|
         # Install some utils
         export DEBIAN_FRONTEND=noninteractive
         apt-get update
-        apt-get install -y jq bash-completion
+        apt-get install -y jq bash-completion command-not-found
 
         # Add swapfile
         local swapfile="/microk8s_swapfile"
